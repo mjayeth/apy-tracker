@@ -7,8 +7,7 @@ DeFi vaults의 Net APY를 실시간으로 추적하는 하이브리드 솔루션
 - **하이브리드 데이터 수집**: API + 웹 스크래핑
 - **실시간 APY 추적**: 11개 주요 DeFi vaults
 - **웹 대시보드**: 실시간 데이터 시각화
-- **데이터 저장**: JSON 및 CSV 형식으로 히스토리 보관
-- **자동화**: 정기적인 데이터 수집
+- **데이터 저장**: JSON 형식으로 히스토리 보관
 
 ## 📊 Supported Vaults
 
@@ -27,7 +26,7 @@ DeFi vaults의 Net APY를 실시간으로 추적하는 하이브리드 솔루션
 
 ### Other Protocols - 웹 스크래핑
 - Kamino Finance Lend (Solana)
-- Amnis Finance Stake (Solana)
+- Amnis Finance Stake (Aptos)
 
 ## 🛠️ Installation
 
@@ -48,17 +47,15 @@ npx playwright install chromium
 ### 데이터 수집
 ```bash
 # APY 데이터 수집
-npm start
-# 또는
 npm run collect
 ```
 
 ### 웹 대시보드 실행
 ```bash
 # 대시보드 서버 시작
-npm run dashboard
+npm start
 # 또는
-npm run serve
+npm run dashboard
 ```
 
 대시보드는 http://localhost:3000 에서 접속할 수 있습니다.
@@ -74,9 +71,7 @@ apy-tracker/
 ├── dashboard.js          # 웹 대시보드 서버
 ├── package.json          # 프로젝트 설정
 ├── data/                 # 데이터 저장소
-│   ├── latest.json       # 최신 데이터
-│   ├── history/          # 히스토리 데이터
-│   └── backup/           # 백업 데이터
+│   └── latest.json       # 최신 데이터
 └── public/               # 웹 대시보드 파일
     └── index.html        # 대시보드 UI
 ```
@@ -135,9 +130,7 @@ apy-tracker/
 웹 대시보드에서 제공하는 API:
 
 - `GET /api/latest` - 최신 데이터
-- `GET /api/stats` - 통계 정보
-- `GET /api/trends` - 트렌드 데이터
-- `GET /api/history` - 히스토리 데이터
+- `POST /api/collect` - 수동 데이터 수집
 
 ## 🤝 Contributing
 

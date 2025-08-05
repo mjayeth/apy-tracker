@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: apy-tracker
+    env: docker
+    plan: free
+    buildCommand: docker build -t apy-tracker .
+    startCommand: docker run -p $PORT:3000 apy-tracker
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000 
