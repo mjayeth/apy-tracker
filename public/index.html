@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeFi APY Tracker Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .vaults-table {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .refresh-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #2563eb;
+        }
+
+        .refresh-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            padding: 16px 24px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .vault-name {
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        .asset-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .asset-badge.usdc {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .asset-badge.usdt {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .asset-badge.sol {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .asset-badge.apt {
+            background: #1e293b;
+            color: #f8fafc;
+        }
+
+        .chain-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: #6b7280;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .protocol-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: #fef3c7;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #92400e;
+        }
+
+        .rating {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star {
+            color: #fbbf24;
+            font-size: 14px;
+        }
+
+        .status {
+            color: #059669;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .apy-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #dc2626; /* 빨간색 APY */
+        }
+
+        .sortable-header {
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            position: relative;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+        }
+
+        .sortable-header:hover {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .sortable-header:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        #sortIcon {
+            margin-left: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #475569;
+            transition: all 0.2s ease;
+        }
+
+        .sortable-header:hover #sortIcon {
+            color: #1e293b;
+            transform: scale(1.1);
+        }
+
+        /* 클릭 가능함을 나타내는 추가 시각적 힌트 */
+        .sortable-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sortable-header:hover::after {
+            opacity: 1;
+        }
+
+        .apy-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .action-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            border: 1px solid #fecaca;
+        }
+
+        .success {
+            background: #f0fdf4;
+            color: #059669;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            border: 1px solid #bbf7d0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+            
+            th, td {
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DeFi APY Tracker</h1>
+            <p>Real-time DeFi Vault APY Monitoring Dashboard</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Vaults</h3>
+                <div class="value" id="totalVaults">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Average APY</h3>
+                <div class="value" id="averageApy">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Highest APY</h3>
+                <div class="value" id="highestApy">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Last Update</h3>
+                <div class="value" id="lastUpdate">-</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="vaults-table">
+                <div class="table-header">
+                    <h2>Vault APY Status</h2>
+                    <button class="refresh-btn" onclick="refreshData()" id="refreshBtn">
+                        Refresh
+                    </button>
+                </div>
+                <div class="table-container">
+                                    <div id="vaultsTable">
+                    <div class="loading">Loading data...</div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 데이터 불러오기
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+
+        // 데이터 불러오기
+        async function loadData() {
+            try {
+                const response = await fetch('/api/latest');
+                const result = await response.json();
+
+                if (result.success) {
+                    displayData(result.data);
+                    updateStats(result.data);
+                } else {
+                    showError('Failed to load data: ' + result.message);
+                }
+            } catch (error) {
+                showError('Error occurred while loading data: ' + error.message);
+            }
+        }
+
+        // 데이터 표시
+        function displayData(data) {
+            window.currentData = data; // 전역 변수로 저장
+            const tableContainer = document.getElementById('vaultsTable');
+            
+            if (!data.vaults || data.vaults.length === 0) {
+                tableContainer.innerHTML = '<div class="loading">No data available.</div>';
+                return;
+            }
+
+            let sortedVaults = data.vaults.filter(vault => vault.netApy !== 'Error' && vault.netApy !== 'N/A');
+
+            // 정렬 상태에 따라 처리
+            if (currentSortState === 'asc') {
+                // APY 오름차순 정렬
+                sortedVaults = sortedVaults.sort((a, b) => (a.netApy || 0) - (b.netApy || 0));
+            } else if (currentSortState === 'desc') {
+                // APY 내림차순 정렬
+                sortedVaults = sortedVaults.sort((a, b) => (b.netApy || 0) - (a.netApy || 0));
+            } else {
+                // 고정 순서 (정렬 해제)
+                const fixedOrder = [
+                    'High-Yield USDC Vault by Alphaping',
+                    'Smokehouse High-Yield USDT by Steakhouse',
+                    'OEV-Boosted High-Yield USDC by Yearn',
+                    'High-Yield USDC Vault by Hyperithm',
+                    'High-Yield USDC Lending by Gauntlet',
+                    'High-Yield USDC Vault by Relend',
+                    'High-Yield USDC Vault by Steakhouse',
+                    'SOL High APY Lending Strategy',
+                    'High-Yield USDT Lending by Gauntlet',
+                    'APT Low-risk High-interest Staking',
+                    'OpenEden High-Yield USDC by Ouroboros'
+                ];
+                
+                sortedVaults = fixedOrder.map(name => 
+                    sortedVaults.find(vault => vault.name === name)
+                ).filter(Boolean);
+            }
+
+            const tableHTML = `
+                <table>
+                                            <thead>
+                            <tr>
+                                <th>Vault Name</th>
+                                <th>Asset</th>
+                                <th>Chain</th>
+                                <th>Protocol</th>
+                                <th class="sortable-header" onclick="toggleApySort()" title="Click to sort APY">
+                                    APY <span id="sortIcon">↕</span>
+                                </th>
+                                <th>Link</th>
+                            </tr>
+                        </thead>
+                    <tbody>
+                        ${sortedVaults.map((vault, index) => `
+                            <tr>
+                                <td>
+                                    <div class="vault-name">${vault.name}</div>
+                                </td>
+                                <td>
+                                    <div class="asset-badge ${getAssetClass(vault.name, vault.asset)}">
+                                        $${getAssetSymbol(vault.name, vault.asset)}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="chain-badge">
+                                        ${getChainName(vault.name)}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="protocol-badge">
+                                        ${getProtocolName(vault.name)}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="apy-value">${formatApy(vault.netApy)}</div>
+                                </td>
+                                <td>
+                                    ${vault.url ? 
+                                        `<a href="${vault.url}" target="_blank" class="action-link">Go to ></a>` : 
+                                        `<span class="action-link">Tutorial ></span>`
+                                    }
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            tableContainer.innerHTML = tableHTML;
+        }
+
+        // 체인 이름 반환
+        function getChainName(vaultName) {
+            if (vaultName.includes('SOL High APY Lending Strategy')) {
+                return 'Solana';
+            }
+            if (vaultName.includes('APT Low-risk High-interest Staking')) {
+                return 'Aptos';
+            }
+            if (vaultName.includes('Smokehouse High-Yield USDT by Steakhouse') || 
+                vaultName.includes('High-Yield USDT Lending by Gauntlet') ||
+                vaultName.includes('High-Yield USDC Lending by Gauntlet')) {
+                return 'Polygon';
+            }
+            return 'Ethereum';
+        }
+
+        // 자산 심볼 반환
+        function getAssetSymbol(vaultName, asset) {
+            if (vaultName.includes('APT Low-risk High-interest Staking')) {
+                return 'APT';
+            }
+            if (vaultName.includes('SOL High APY Lending Strategy')) {
+                return 'SOL';
+            }
+            return asset;
+        }
+
+        // Asset 클래스 반환
+        function getAssetClass(vaultName, asset) {
+            const symbol = getAssetSymbol(vaultName, asset);
+            return symbol.toLowerCase();
+        }
+
+        // 프로토콜 이름 추출
+        function getProtocolName(vaultName) {
+            // 특별한 케이스들 먼저 처리
+            if (vaultName.includes('SOL High APY Lending Strategy')) {
+                return 'Allez';
+            }
+            if (vaultName.includes('APT Low-risk High-interest Staking')) {
+                return 'Amnis';
+            }
+            
+            const protocols = {
+                'Morpho': 'Morpho',
+                'Compound': 'Compound',
+                'Kamino': 'Kamino',
+                'Amnis': 'Amnis',
+                'OpenEden': 'OpenEden',
+                'Ouroboros': 'Ouroboros',
+                'Alphaping': 'Alphaping',
+                'Steakhouse': 'Steakhouse',
+                'Hyperithm': 'Hyperithm',
+                'Relend': 'Relend',
+                'Yearn': 'Yearn',
+                'Gauntlet': 'Gauntlet',
+                'Allez': 'Allez'
+            };
+
+            for (const [key, value] of Object.entries(protocols)) {
+                if (vaultName.includes(key)) {
+                    return value;
+                }
+            }
+            return 'Unknown';
+        }
+
+        // 정렬 상태 변수
+        let currentSortState = 'none'; // 'none', 'asc', 'desc'
+
+        // APY 정렬 토글 함수
+        function toggleApySort() {
+            const sortIcon = document.getElementById('sortIcon');
+            
+            if (currentSortState === 'none') {
+                currentSortState = 'asc';
+                sortIcon.textContent = '↑';
+            } else if (currentSortState === 'asc') {
+                currentSortState = 'desc';
+                sortIcon.textContent = '↓';
+            } else {
+                currentSortState = 'none';
+                sortIcon.textContent = '↕';
+            }
+            
+            displayData(window.currentData || []);
+        }
+
+        // UTC 시간 포맷팅
+        function formatUTCTime(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            const date = new Date(timestamp);
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const hours = String(date.getUTCHours()).padStart(2, '0');
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+            
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} UTC`;
+        }
+
+        // 통계 업데이트
+        function updateStats(data) {
+            const vaults = data.vaults || [];
+            
+            document.getElementById('totalVaults').textContent = vaults.length;
+            
+            const validApys = vaults.filter(v => typeof v.netApy === 'number').map(v => v.netApy);
+            const averageApy = validApys.length > 0 ? validApys.reduce((a, b) => a + b, 0) / validApys.length : 0;
+            document.getElementById('averageApy').textContent = formatApy(averageApy);
+            
+            const highestApy = validApys.length > 0 ? Math.max(...validApys) : 0;
+            document.getElementById('highestApy').textContent = formatApy(highestApy);
+            
+            document.getElementById('lastUpdate').textContent = formatUTCTime(data.timestamp);
+        }
+
+        // APY 포맷팅
+        function formatApy(apy) {
+            if (typeof apy !== 'number' || isNaN(apy)) return 'N/A';
+            return (apy * 100).toFixed(2) + '%';
+        }
+
+        // 새로고침
+        async function refreshData() {
+            const btn = document.getElementById('refreshBtn');
+            btn.disabled = true;
+            btn.textContent = 'Collecting...';
+
+            try {
+                const response = await fetch('/api/collect', { method: 'POST' });
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess(result.message);
+                    await loadData();
+                } else {
+                    showError('Data collection failed: ' + result.message);
+                }
+            } catch (error) {
+                showError('Error during data collection: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Refresh';
+            }
+        }
+
+        // 성공 메시지 표시
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            document.querySelector('.container').insertBefore(successDiv, document.querySelector('.stats-grid'));
+            
+            setTimeout(() => successDiv.remove(), 5000);
+        }
+
+        // 오류 메시지 표시
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            document.querySelector('.container').insertBefore(errorDiv, document.querySelector('.stats-grid'));
+            
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+
+        // 자동 새로고침 (5분마다)
+        setInterval(loadData, 5 * 60 * 1000);
+    </script>
+</body>
+</html> 
