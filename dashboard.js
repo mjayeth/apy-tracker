@@ -40,7 +40,12 @@ app.post('/api/collect', async (req, res) => {
       res.json({ success: false, message: 'Data collection failed.' });
     }
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('❌ Data collection error:', error.message);
+    res.status(500).json({ 
+      success: false, 
+      message: `Data collection failed: ${error.message}`,
+      error: error.stack 
+    });
   }
 });
 
