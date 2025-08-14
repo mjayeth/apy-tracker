@@ -20,6 +20,14 @@ module.exports = [
     url: 'https://app.morpho.org/ethereum/vault/0xb0f05E4De970A1aaf77f8C2F823953a367504BA9/alphaping-usdc'
   },
   {
+    name: 'pufETH/WETH Loop on Euler Finance',
+    address: '0x46BC453666BA11b4b08B0804E49A9D797546ee7D',
+    chainId: 1,
+    asset: 'pufETH',
+    type: 'euler',
+    url: 'https://app.euler.finance/vault/0x46BC453666BA11b4b08B0804E49A9D797546ee7D?network=ethereum'
+  },
+  {
     name: 'Smokehouse High-Yield USDT by Steakhouse',
     address: '0xA0804346780b4c2e3bE118ac957D1DB82F9d7484',
     chainId: 1,

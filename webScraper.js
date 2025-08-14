@@ -6,12 +6,8 @@ async function scrapeMorphoVault(vault, page) {
     // Morpho 사이트는 동적으로 로드되므로 더 오래 기다림
     await page.waitForTimeout(10000);
     
-    // Morpho 사이트의 특정 선택자들
+    // Morpho 사이트의 핵심 선택자들
     const morphoSelectors = [
-      '[data-testid="net-apy"]',
-      '[data-testid="apy"]',
-      '.net-apy',
-      '.apy',
       'div:has-text("Net APY")',
       'span:has-text("Net APY")',
       'div:has-text("APY")',
@@ -72,14 +68,8 @@ async function scrapeCompoundBlueVault(vault, page) {
     // 페이지가 완전히 로드될 때까지 대기
     await page.waitForLoadState('networkidle');
     
-    // Compound Blue 사이트의 특정 선택자들 (더 구체적으로)
+    // Compound Blue 사이트의 핵심 선택자들
     const compoundSelectors = [
-      '[data-testid="apy"]',
-      '[data-testid="rate"]',
-      '[data-testid="yield"]',
-      '.apy',
-      '.rate',
-      '.yield',
       'div:has-text("APY")',
       'span:has-text("APY")',
       'div:has-text("Rate")',
@@ -214,7 +204,9 @@ async function scrapeKaminoVault(vault, page) {
           bestApy = apyValue / 100;
           console.log(`Found Kamino APY with pattern ${pattern}: ${apyValue}%`);
         }
+
       }
+
     }
     
     if (bestApy) {
@@ -299,6 +291,58 @@ async function scrapeAmnisVault(vault, page) {
   }
 }
 
+// Euler vault 스크래핑 함수 (최적화된 버전)
+async function scrapeEulerVault(vault, page) {
+  try {
+    // 가장 빠른 방법: 페이지 텍스트에서 직접 패턴 찾기
+    const pageText = await page.textContent('body');
+    
+    // 디버깅: 페이지 텍스트 일부 출력
+    console.log('Page text preview:', pageText.substring(0, 500));
+    
+    // Supply APY 패턴들 (이미지에서 보인 6.94% 형태)
+    const apyPatterns = [
+      /Supply APY[:\s]*(\d+\.?\d*)\s*%/i,
+      /(\d+\.?\d*)\s*%\s*Supply APY/i,
+      /Supply APY[:\s]*(\d+\.?\d*)/i,
+      /(\d+\.?\d*)\s*%\s*Supply/i,  // "6.94 % Supply" 형태
+      /(\d+\.?\d*)\s*%/,  // 단순히 숫자+% 형태
+      /Supply[:\s]*(\d+\.?\d*)\s*%/i,  // "Supply: 6.94 %" 형태
+      /(\d+\.?\d*)\s*%\s*Supply/i  // "6.94 % Supply" 형태
+    ];
+    
+    for (const pattern of apyPatterns) {
+      const match = pageText.match(pattern);
+      if (match) {
+        const apyValue = parseFloat(match[1]);
+        if (apyValue >= 1 && apyValue <= 50) {
+          console.log(`Found Euler Supply APY: ${apyValue}%`);
+          return apyValue / 100;
+        }
+      }
+    }
+    
+    // 빠른 대안: 특정 텍스트 주변에서 APY 찾기
+    const supplyApyIndex = pageText.indexOf('Supply APY');
+    if (supplyApyIndex !== -1) {
+      const surroundingText = pageText.substring(Math.max(0, supplyApyIndex - 50), supplyApyIndex + 100);
+      const apyMatch = surroundingText.match(/(\d+\.?\d*)\s*%/);
+      if (apyMatch) {
+        const apyValue = parseFloat(apyMatch[1]);
+        if (apyValue >= 1 && apyValue <= 50) {
+          console.log(`Found Euler Supply APY from surrounding text: ${apyValue}%`);
+          return apyValue / 100;
+        }
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error(`Error scraping Euler vault ${vault.name}:`, error.message);
+    return null;
+  }
+}
+
 // 통합 스크래핑 함수
 async function scrapeVaultNetApy(vault) {
   try {
@@ -310,7 +354,26 @@ async function scrapeVaultNetApy(vault) {
     });
     
     const page = await browser.newPage();
-    await page.goto(vault.url, { waitUntil: 'networkidle' });
+    
+    // Euler vault의 경우 Cloudflare 우회를 위한 설정
+    if (vault.name.includes('Euler') || vault.type === 'euler') {
+      // User-Agent와 헤더 설정으로 봇 감지 우회
+      await page.setExtraHTTPHeaders({
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1'
+      });
+      
+      await page.goto(vault.url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      // Cloudflare 검증을 위한 충분한 대기 시간
+      await page.waitForTimeout(8000);
+    } else {
+      await page.goto(vault.url, { waitUntil: 'networkidle', timeout: 20000 });
+    }
     
     let netApy = null;
     
@@ -325,6 +388,8 @@ async function scrapeVaultNetApy(vault) {
       netApy = await scrapeKaminoVault(vault, page);
     } else if (vault.name.includes('Amnis') || vault.name.includes('APT')) {
       netApy = await scrapeAmnisVault(vault, page);
+    } else if (vault.name.includes('Euler') || vault.type === 'euler') {
+      netApy = await scrapeEulerVault(vault, page);
     }
     
     await browser.close();
@@ -378,4 +443,4 @@ async function scrapeAllVaultsNetApy(vaults) {
 module.exports = { 
   scrapeVaultNetApy, 
   scrapeAllVaultsNetApy 
-}; 
+};
