@@ -272,111 +272,9 @@
     </div>
 
     <script>
-        // APY 데이터 (정적 데이터)
-        const vaultData = {
-            "timestamp": "2025-08-14T22:10:00.000Z",
-            "date": "2025-08-14",
-            "time": "22-10-00",
-            "vaults": [
-                {
-                    "name": "OEV-Boosted High-Yield USDC by Yearn",
-                    "address": "0x68Aea7b82Df6CcdF76235D46445Ed83f85F845A3",
-                    "asset": "USDC",
-                    "netApy": 0.0835,
-                    "source": "web_scraping",
-                    "url": "https://app.morpho.org/ethereum/vault/0x68Aea7b82Df6CcdF76235D46445Ed83f85F845A3/oev-boosted-usdc"
-                },
-                {
-                    "name": "High-Yield USDC Vault by Alphaping",
-                    "address": "0xb0f05E4De970A1aaf77f8C2F823953a367504BA9",
-                    "asset": "USDC",
-                    "netApy": 0.1254,
-                    "source": "web_scraping",
-                    "url": "https://app.morpho.org/ethereum/vault/0xb0f05E4De970A1aaf77f8C2F823953a367504BA9/alphaping-usdc"
-                },
-                {
-                    "name": "pufETH/WETH Loop on Euler Finance",
-                    "address": "0x46BC453666BA11b4b08B0804E49A9D797546ee7D",
-                    "asset": "pufETH",
-                    "netApy": 0.0694,
-                    "source": "web_scraping",
-                    "url": "https://app.euler.finance/vault/0x46BC453666BA11b4b08B0804E49A9D797546ee7D?network=ethereum"
-                },
-                {
-                    "name": "High-Yield USDC Vault by Hyperithm",
-                    "address": "0x777791C4d6DC2CE140D00D2828a7C93503c67777",
-                    "asset": "USDC",
-                    "netApy": 0.1122,
-                    "source": "web_scraping",
-                    "url": "https://app.morpho.org/ethereum/vault/0x777791C4d6DC2CE140D00D2828a7C93503c67777/hyperithm-usdc"
-                },
-                {
-                    "name": "High-Yield USDC Vault by Steakhouse",
-                    "address": "0xBEeFFF209270748ddd194831b3fa287a5386f5bC",
-                    "asset": "USDC",
-                    "netApy": 0.0931,
-                    "source": "web_scraping",
-                    "url": "https://app.morpho.org/ethereum/vault/0xBEeFFF209270748ddd194831b3fa287a5386f5bC/steakhouse-usdc"
-                },
-                {
-                    "name": "High-Yield USDC Lending by Gauntlet",
-                    "address": "0x781FB7F6d845E3bE129289833b04d43Aa8558c42",
-                    "asset": "USDC",
-                    "netApy": 0.1040,
-                    "source": "morpho_api",
-                    "url": "https://www.compound.blue/0x781FB7F6d845E3bE129289833b04d43Aa8558c42"
-                },
-                {
-                    "name": "High-Yield USDC Vault by Relend",
-                    "address": "0x0F359FD18BDa75e9c49bC027E7da59a4b01BF32a",
-                    "asset": "USDC",
-                    "netApy": 0.1042,
-                    "source": "web_scraping",
-                    "url": "https://app.morpho.org/ethereum/vault/0x0F359FD18BDa75e9c49bC027E7da59a4b01BF32a/relend-usdc"
-                },
-                {
-                    "name": "Smokehouse High-Yield USDT by Steakhouse",
-                    "address": "0xA0804346780b4c2e3bE118ac957D1DB82F9d7484",
-                    "asset": "USDT",
-                    "netApy": 0.0889,
-                    "source": "web_scraping",
-                    "url": "https://app.morpho.org/ethereum/vault/0xA0804346780b4c2e3bE118ac957D1DB82F9d7484/smokehouse-usdt"
-                },
-                {
-                    "name": "High-Yield USDT Lending by Gauntlet",
-                    "address": "0xfD06859A671C21497a2EB8C5E3fEA48De924D6c8",
-                    "asset": "USDT",
-                    "netApy": 0.2765,
-                    "source": "morpho_api",
-                    "url": "https://www.compound.blue/0xfD06859A671C21497a2EB8C5E3fEA48De924D6c8"
-                },
-                {
-                    "name": "SOL High APY Lending Strategy",
-                    "address": "A1so1bPD3W1TfeFwboDh8yfAAVaVtcdAYBYCjhg2mJQ",
-                    "asset": "SOL",
-                    "netApy": 0.0764,
-                    "source": "web_scraping",
-                    "url": "https://app.kamino.finance/earn/lend/A1so1bPD3W1TfeFwboDh8yfAAVaVtcdAYBYCjhg2mJQ"
-                },
-                {
-                    "name": "APT Low-risk High-interest Staking",
-                    "address": "stake.amnis.finance",
-                    "asset": "APT",
-                    "netApy": 0.0719,
-                    "source": "web_scraping",
-                    "url": "https://stake.amnis.finance/stake"
-                },
-                {
-                    "name": "OpenEden High-Yield USDC by Ouroboros",
-                    "address": "0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD",
-                    "asset": "USDC",
-                    "netApy": 0.0809,
-                    "source": "web_scraping",
-                    "url": "https://app.morpho.org/ethereum/vault/0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD/openeden-usdc"
-                }
-            ]
-        };
-
+        // APY 데이터 (API에서 동적으로 가져옴)
+        let vaultData = null;
+        
         // 유틸리티 함수들
         function getAssetClass(vaultName, asset) {
             if (vaultName.includes('APT')) return 'apt';
@@ -428,11 +326,14 @@
 
         // 통계 업데이트
         function updateStats() {
-            const vaults = vaultData.vaults;
-            
-            document.getElementById('totalVaults').textContent = vaults.length;
-            
-            const validApys = vaults.filter(v => typeof v.netApy === 'number').map(v => v.netApy);
+            if (!vaultData || vaultData.vaults.length === 0) {
+                document.getElementById('totalVaults').textContent = '0';
+                document.getElementById('averageApy').textContent = 'N/A';
+                document.getElementById('highestApy').textContent = 'N/A';
+                return;
+            }
+
+            const validApys = vaultData.vaults.filter(v => typeof v.netApy === 'number').map(v => v.netApy);
             const averageApy = validApys.length > 0 ? validApys.reduce((a, b) => a + b, 0) / validApys.length : 0;
             document.getElementById('averageApy').textContent = formatApy(averageApy);
             
@@ -444,7 +345,7 @@
         function displayData() {
             const tableContainer = document.getElementById('vaultsTable');
             
-            if (!vaultData.vaults || vaultData.vaults.length === 0) {
+            if (!vaultData || vaultData.vaults.length === 0) {
                 tableContainer.innerHTML = '<div class="loading">No data available.</div>';
                 return;
             }
@@ -522,6 +423,10 @@
 
         // 마지막 업데이트 시간 표시
         function updateLastUpdated() {
+            if (!vaultData) {
+                document.getElementById('lastUpdated').textContent = 'N/A';
+                return;
+            }
             const timestamp = new Date(vaultData.timestamp);
             const options = { 
                 year: 'numeric', 
@@ -536,6 +441,116 @@
 
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', function() {
+            // 데이터를 가져오는 함수 (예: fetchVaultData())
+            // 여기에 API 호출 로직을 추가해야 합니다.
+            // 예: fetchVaultData().then(data => { vaultData = data; updateStats(); displayData(); updateLastUpdated(); });
+
+            // 임시로 데이터를 로드하여 테스트
+            // 실제 앱에서는 이 부분을 실제 API 호출로 대체해야 합니다.
+            vaultData = {
+                "timestamp": "2025-08-14T22:10:00.000Z",
+                "date": "2025-08-14",
+                "time": "22-10-00",
+                "vaults": [
+                    {
+                        "name": "OEV-Boosted High-Yield USDC by Yearn",
+                        "address": "0x68Aea7b82Df6CcdF76235D46445Ed83f85F845A3",
+                        "asset": "USDC",
+                        "netApy": 0.0835,
+                        "source": "web_scraping",
+                        "url": "https://app.morpho.org/ethereum/vault/0x68Aea7b82Df6CcdF76235D46445Ed83f85F845A3/oev-boosted-usdc"
+                    },
+                    {
+                        "name": "High-Yield USDC Vault by Alphaping",
+                        "address": "0xb0f05E4De970A1aaf77f8C2F823953a367504BA9",
+                        "asset": "USDC",
+                        "netApy": 0.1254,
+                        "source": "web_scraping",
+                        "url": "https://app.morpho.org/ethereum/vault/0xb0f05E4De970A1aaf77f8C2F823953a367504BA9/alphaping-usdc"
+                    },
+                    {
+                        "name": "pufETH/WETH Loop on Euler Finance",
+                        "address": "0x46BC453666BA11b4b08B0804E49A9D797546ee7D",
+                        "asset": "pufETH",
+                        "netApy": 0.0694,
+                        "source": "web_scraping",
+                        "url": "https://app.euler.finance/vault/0x46BC453666BA11b4b08B0804E49A9D797546ee7D?network=ethereum"
+                    },
+                    {
+                        "name": "High-Yield USDC Vault by Hyperithm",
+                        "address": "0x777791C4d6DC2CE140D00D2828a7C93503c67777",
+                        "asset": "USDC",
+                        "netApy": 0.1122,
+                        "source": "web_scraping",
+                        "url": "https://app.morpho.org/ethereum/vault/0x777791C4d6DC2CE140D00D2828a7C93503c67777/hyperithm-usdc"
+                    },
+                    {
+                        "name": "High-Yield USDC Vault by Steakhouse",
+                        "address": "0xBEeFFF209270748ddd194831b3fa287a5386f5bC",
+                        "asset": "USDC",
+                        "netApy": 0.0931,
+                        "source": "web_scraping",
+                        "url": "https://app.morpho.org/ethereum/vault/0xBEeFFF209270748ddd194831b3fa287a5386f5bC/steakhouse-usdc"
+                    },
+                    {
+                        "name": "High-Yield USDC Lending by Gauntlet",
+                        "address": "0x781FB7F6d845E3bE129289833b04d43Aa8558c42",
+                        "asset": "USDC",
+                        "netApy": 0.1040,
+                        "source": "morpho_api",
+                        "url": "https://www.compound.blue/0x781FB7F6d845E3bE129289833b04d43Aa8558c42"
+                    },
+                    {
+                        "name": "High-Yield USDC Vault by Relend",
+                        "address": "0x0F359FD18BDa75e9c49bC027E7da59a4b01BF32a",
+                        "asset": "USDC",
+                        "netApy": 0.1042,
+                        "source": "web_scraping",
+                        "url": "https://app.morpho.org/ethereum/vault/0x0F359FD18BDa75e9c49bC027E7da59a4b01BF32a/relend-usdc"
+                    },
+                    {
+                        "name": "Smokehouse High-Yield USDT by Steakhouse",
+                        "address": "0xA0804346780b4c2e3bE118ac957D1DB82F9d7484",
+                        "asset": "USDT",
+                        "netApy": 0.0889,
+                        "source": "web_scraping",
+                        "url": "https://app.morpho.org/ethereum/vault/0xA0804346780b4c2e3bE118ac957D1DB82F9d7484/smokehouse-usdt"
+                    },
+                    {
+                        "name": "High-Yield USDT Lending by Gauntlet",
+                        "address": "0xfD06859A671C21497a2EB8C5E3fEA48De924D6c8",
+                        "asset": "USDT",
+                        "netApy": 0.2765,
+                        "source": "morpho_api",
+                        "url": "https://www.compound.blue/0xfD06859A671C21497a2EB8C5E3fEA48De924D6c8"
+                    },
+                    {
+                        "name": "SOL High APY Lending Strategy",
+                        "address": "A1so1bPD3W1TfeFwboDh8yfAAVaVtcdAYBYCjhg2mJQ",
+                        "asset": "SOL",
+                        "netApy": 0.0764,
+                        "source": "web_scraping",
+                        "url": "https://app.kamino.finance/earn/lend/A1so1bPD3W1TfeFwboDh8yfAAVaVtcdAYBYCjhg2mJQ"
+                    },
+                    {
+                        "name": "APT Low-risk High-interest Staking",
+                        "address": "stake.amnis.finance",
+                        "asset": "APT",
+                        "netApy": 0.0719,
+                        "source": "web_scraping",
+                        "url": "https://stake.amnis.finance/stake"
+                    },
+                    {
+                        "name": "OpenEden High-Yield USDC by Ouroboros",
+                        "address": "0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD",
+                        "asset": "USDC",
+                        "netApy": 0.0809,
+                        "source": "web_scraping",
+                        "url": "https://app.morpho.org/ethereum/vault/0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD/openeden-usdc"
+                    }
+                ]
+            };
+
             updateStats();
             displayData();
             updateLastUpdated();

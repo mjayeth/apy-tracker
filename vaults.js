@@ -100,5 +100,30 @@ module.exports = [
     chainId: 1,
     asset: 'USDC',
     url: 'https://app.morpho.org/ethereum/vault/0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD/openeden-usdc'
+  },
+  // Jupiter Lend vaults
+  {
+    name: 'Jupiter Lend USDC',
+    address: 'jupiter-lend-usdc',
+    chainId: 101,
+    asset: 'USDC',
+    type: 'jupiter',
+    url: 'https://jup.ag/lend/earn'
+  },
+  {
+    name: 'Jupiter Lend USDT',
+    address: 'jupiter-lend-usdt',
+    chainId: 101,
+    asset: 'USDT',
+    type: 'jupiter',
+    url: 'https://jup.ag/lend/earn'
+  },
+  {
+    name: 'Jupiter Lend USDS',
+    address: 'jupiter-lend-usds',
+    chainId: 101,
+    asset: 'USDS',
+    type: 'jupiter',
+    url: 'https://jup.ag/lend/earn'
   }
 ]; 
