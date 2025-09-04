@@ -11,7 +11,14 @@
  */
 
 module.exports = [
-  // ALPHA Hub 순서에 맞춰 정렬
+  // 사용자 지정 순서에 맞춰 정렬
+  {
+    name: 'Smokehouse High-Yield USDT by Steakhouse',
+    address: '0xA0804346780b4c2e3bE118ac957D1DB82F9d7484',
+    chainId: 1,
+    asset: 'USDT',
+    url: 'https://app.morpho.org/ethereum/vault/0xA0804346780b4c2e3bE118ac957D1DB82F9d7484/smokehouse-usdt'
+  },
   {
     name: 'OEV-Boosted High-Yield USDC by Yearn',
     address: '0x68Aea7b82Df6CcdF76235D46445Ed83f85F845A3',
@@ -43,19 +50,12 @@ module.exports = [
     url: 'https://app.morpho.org/ethereum/vault/0x777791C4d6DC2CE140D00D2828a7C93503c67777/hyperithm-usdc'
   },
   {
-    name: 'High-Yield USDC Vault by Steakhouse',
-    address: '0xBEeFFF209270748ddd194831b3fa287a5386f5bC',
-    chainId: 1,
-    asset: 'USDC',
-    url: 'https://app.morpho.org/ethereum/vault/0xBEeFFF209270748ddd194831b3fa287a5386f5bC/steakhouse-usdc'
-  },
-  {
-    name: 'High-Yield USDC Lending by Gauntlet',
-    address: '0x781FB7F6d845E3bE129289833b04d43Aa8558c42',
+    name: 'High-Yield USDT Lending by Gauntlet',
+    address: '0xfD06859A671C21497a2EB8C5E3fEA48De924D6c8',
     chainId: 137,
-    asset: 'USDC',
+    asset: 'USDT',
     type: 'compound_blue',
-    url: 'https://www.compound.blue/0x781FB7F6d845E3bE129289833b04d43Aa8558c42'
+    url: 'https://www.compound.blue/0xfD06859A671C21497a2EB8C5E3fEA48De924D6c8'
   },
   {
     name: 'High-Yield USDC Vault by Relend',
@@ -65,19 +65,11 @@ module.exports = [
     url: 'https://app.morpho.org/ethereum/vault/0x0F359FD18BDa75e9c49bC027E7da59a4b01BF32a/relend-usdc'
   },
   {
-    name: 'Smokehouse High-Yield USDT by Steakhouse',
-    address: '0xA0804346780b4c2e3bE118ac957D1DB82F9d7484',
+    name: 'High-Yield USDC Vault by Steakhouse',
+    address: '0xBEeFFF209270748ddd194831b3fa287a5386f5bC',
     chainId: 1,
-    asset: 'USDT',
-    url: 'https://app.morpho.org/ethereum/vault/0xA0804346780b4c2e3bE118ac957D1DB82F9d7484/smokehouse-usdt'
-  },
-  {
-    name: 'High-Yield USDT Lending by Gauntlet',
-    address: '0xfD06859A671C21497a2EB8C5E3fEA48De924D6c8',
-    chainId: 137,
-    asset: 'USDT',
-    type: 'compound_blue',
-    url: 'https://www.compound.blue/0xfD06859A671C21497a2EB8C5E3fEA48De924D6c8'
+    asset: 'USDC',
+    url: 'https://app.morpho.org/ethereum/vault/0xBEeFFF209270748ddd194831b3fa287a5386f5bC/steakhouse-usdc'
   },
   {
     name: 'SOL High APY Lending Strategy',
@@ -96,11 +88,20 @@ module.exports = [
     url: 'https://stake.amnis.finance/stake'
   },
   {
-    name: 'OpenEden High-Yield USDC by Ouroboros',
-    address: '0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD',
+    name: 'pufETH/WETH Loop on Euler Finance',
+    address: '0x46BC453666BA11b4b08B0804E49A9D797546ee7D',
     chainId: 1,
+    asset: 'pufETH',
+    type: 'euler',
+    url: 'https://app.euler.finance/vault/0x46BC453666BA11b4b08B0804E49A9D797546ee7D?network=ethereum'
+  },
+  {
+    name: 'High-Yield USDC Lending by Gauntlet',
+    address: '0x781FB7F6d845E3bE129289833b04d43Aa8558c42',
+    chainId: 137,
     asset: 'USDC',
-    url: 'https://app.morpho.org/ethereum/vault/0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD/openeden-usdc'
+    type: 'compound_blue',
+    url: 'https://www.compound.blue/0x781FB7F6d845E3bE129289833b04d43Aa8558c42'
   },
   {
     name: 'High-Yield USDC Vault by Alphaping',
@@ -110,19 +111,10 @@ module.exports = [
     url: 'https://app.morpho.org/ethereum/vault/0xb0f05E4De970A1aaf77f8C2F823953a367504BA9/alphaping-usdc'
   },
   {
-    name: 'pufETH/WETH Loop on Euler Finance',
-    address: '0x46BC453666BA11b4b08B0804E49A9D797546ee7D',
+    name: 'OpenEden High-Yield USDC by Ouroboros',
+    address: '0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD',
     chainId: 1,
-    asset: 'pufETH',
-    type: 'euler',
-    url: 'https://app.euler.finance/vault/0x46BC453666BA11b4b08B0804E49A9D797546ee7D?network=ethereum'
-  },
-  {
-    name: 'Jupiter Lend USDS',
-    address: 'jupiter-lend-usds',
-    chainId: 101,
-    asset: 'USDS',
-    type: 'jupiter',
-    url: 'https://jup.ag/lend/earn'
+    asset: 'USDC',
+    url: 'https://app.morpho.org/ethereum/vault/0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD/openeden-usdc'
   }
 ];
