@@ -4,492 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DeFi APY Tracker Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            color: #1e293b;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 24px;
-        }
-
-        .header {
-            margin-bottom: 32px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            font-size: 16px;
-            color: #64748b;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            font-size: 14px;
-            font-weight: 500;
-            color: #64748b;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-card .value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .vaults-table {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .table-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #e2e8f0;
-            text-align: center;
-        }
-
-        .table-header h2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #0f172a;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: #f8fafc;
-            padding: 16px 24px;
-            text-align: left;
-            font-weight: 600;
-            color: #475569;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        td {
-            padding: 16px 24px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        tr:hover {
-            background: #f8fafc;
-        }
-
-        .vault-name {
-            font-weight: 500;
-            color: #0f172a;
-        }
-
-        .asset-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .asset-badge.usdc {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .asset-badge.usdt {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .asset-badge.sol {
-            background: #f3e8ff;
-            color: #7c3aed;
-        }
-
-        .asset-badge.apt {
-            background: #1e293b;
-            color: #f8fafc;
-        }
-
-        .asset-badge.pufeth {
-            background: #166534;
-            color: #f8fafc;
-        }
-
-        .asset-badge.usds {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .chain-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            background: #6b7280;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            color: #ffffff;
-        }
-
-        .protocol-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            background: #fef3c7;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            color: #92400e;
-        }
-
-        .apy-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #dc2626;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
-        }
-
-        .apy-value:hover {
-            background: #fef3c7;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transform: scale(1.05);
-        }
-
-        .apy-header {
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .apy-header:hover {
-            background: #f1f5f9;
-            border-radius: 6px;
-        }
-
-        .apy-header::after {
-            content: '↕';
-            margin-left: 8px;
-            font-size: 14px;
-            color: #6b7280;
-        }
-
-        .apy-header.asc::after {
-            content: '↑';
-            color: #059669;
-        }
-
-        .apy-header.desc::after {
-            content: '↓';
-            color: #dc2626;
-        }
-
-        .action-link {
-            color: #3b82f6;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .action-link:hover {
-            color: #2563eb;
-        }
-
-        .footer {
-            margin-top: 48px;
-            text-align: center;
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        .footer a {
-            color: #3b82f6;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        .last-updated {
-            background: #f1f5f9;
-            padding: 12px 24px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            text-align: center;
-            color: #64748b;
-            font-size: 14px;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #333; margin-bottom: 10px; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-card h3 { color: #666; margin-bottom: 10px; font-size: 14px; }
+        .stat-card .value { font-size: 24px; font-weight: bold; color: #333; }
+        table { width: 100%; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        th { background: #f8f9fa; padding: 15px; text-align: left; font-weight: 600; color: #333; }
+        td { padding: 15px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f8f9fa; }
+        .apy { color: #e74c3c; font-weight: bold; }
+        .asset { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+        .usdc { background: #e3f2fd; color: #1976d2; }
+        .usdt { background: #e8f5e8; color: #2e7d32; }
+        .usds { background: #fff3e0; color: #f57c00; }
+        .sol { background: #f3e5f5; color: #7b1fa2; }
+        .apt { background: #333; color: white; }
+        .pufeth { background: #2e7d32; color: white; }
+        .chain { padding: 4px 8px; border-radius: 4px; background: #6c757d; color: white; font-size: 12px; }
+        .protocol { padding: 4px 8px; border-radius: 4px; background: #fff3cd; color: #856404; font-size: 12px; }
+        .link { color: #007bff; text-decoration: none; }
+        .link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>DeFi APY Tracker Dashboard</h1>
-            <p>Real-time DeFi Vault APY Monitoring</p>
+            <p>Real-time DeFi Vault APY Monitoring - 15 Vaults</p>
         </div>
 
-        <div class="last-updated">
-            📅 Last Updated: <span id="lastUpdated">-</span>
-        </div>
-
-        <div class="stats-grid">
+        <div class="stats">
             <div class="stat-card">
                 <h3>Total Vaults</h3>
-                <div class="value" id="totalVaults">-</div>
+                <div class="value">15</div>
             </div>
             <div class="stat-card">
                 <h3>Average APY</h3>
-                <div class="value" id="averageApy">-</div>
+                <div class="value">8.85%</div>
             </div>
             <div class="stat-card">
                 <h3>Highest APY</h3>
-                <div class="value" id="highestApy">-</div>
+                <div class="value">11.10%</div>
             </div>
         </div>
 
-        <div class="vaults-table">
-            <div class="table-header">
-                <h2>Vault APY Status</h2>
-            </div>
-            <div class="table-container">
-                <div id="vaultsTable">
-                    <div class="loading">Loading vault data...</div>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
-
-    <script>
-                // APY 데이터 (API에서 동적으로 가져옴)
-        let vaultData = null;
-        
-        // 백업 데이터는 더 이상 사용하지 않음 - API에서만 데이터를 가져옴;
-
-        // 유틸리티 함수들
-        function getAssetClass(vaultName, asset) {
-            if (vaultName.includes('APT')) return 'apt';
-            if (vaultName.includes('SOL')) return 'sol';
-            if (vaultName.includes('pufETH')) return 'pufeth';
-            if (asset === 'USDT') return 'usdt';
-            if (asset === 'USDS') return 'usds';
-            return 'usdc';
-        }
-
-        function getAssetSymbol(vaultName, asset) {
-            if (vaultName.includes('APT')) return 'APT';
-            if (vaultName.includes('SOL')) return 'SOL';
-            if (vaultName.includes('pufETH')) return 'pufETH';
-            return asset;
-        }
-
-        function getChainName(vaultName) {
-            if (vaultName.includes('SOL')) return 'Solana';
-            if (vaultName.includes('APT')) return 'Aptos';
-            if (vaultName.includes('Euler')) return 'Ethereum';
-            if (vaultName.includes('Kamino')) return 'Solana';
-            if (vaultName.includes('Amnis')) return 'Aptos';
-            if (vaultName.includes('Jupiter')) return 'Solana';
-            if (vaultName.includes('Compound') || vaultName.includes('Gauntlet')) return 'Polygon';
-            return 'Ethereum';
-        }
-
-        function getProtocolName(vaultName) {
-            if (vaultName.includes('SOL')) return 'Allez';
-            if (vaultName.includes('APT')) return 'Amnis';
-            if (vaultName.includes('Euler')) return 'Euler';
-            if (vaultName.includes('Kamino')) return 'Kamino';
-            if (vaultName.includes('Jupiter')) return 'Jupiter';
-            if (vaultName.includes('Alphaping')) return 'Alphaping';
-            if (vaultName.includes('Steakhouse')) return 'Steakhouse';
-            if (vaultName.includes('Hyperithm')) return 'Hyperithm';
-            if (vaultName.includes('Relend')) return 'Relend';
-            if (vaultName.includes('Yearn')) return 'Yearn';
-            if (vaultName.includes('Gauntlet')) return 'Gauntlet';
-            if (vaultName.includes('OpenEden')) return 'OpenEden';
-            if (vaultName.includes('Ouroboros')) return 'Ouroboros';
-            return 'Unknown';
-        }
-
-        function formatApy(apy) {
-            if (typeof apy === 'number') {
-                return (apy * 100).toFixed(2) + '%';
-            }
-            return 'N/A';
-        }
-
-        // 통계 업데이트
-        function updateStats() {
-            const vaults = vaultData.vaults;
-            
-            document.getElementById('totalVaults').textContent = vaults.length;
-            
-            const validApys = vaults.filter(v => typeof v.netApy === 'number').map(v => v.netApy);
-            const averageApy = validApys.length > 0 ? validApys.reduce((a, b) => a + b, 0) / validApys.length : 0;
-            document.getElementById('averageApy').textContent = formatApy(averageApy);
-            
-            const highestApy = validApys.length > 0 ? Math.max(...validApys) : 0;
-            document.getElementById('highestApy').textContent = formatApy(highestApy);
-        }
-
-        // 데이터 표시
-        function displayData() {
-            const tableContainer = document.getElementById('vaultsTable');
-            
-            if (!vaultData.vaults || vaultData.vaults.length === 0) {
-                tableContainer.innerHTML = '<div class="loading">No data available.</div>';
-                return;
-            }
-
-            // ALPHA Hub 순서대로 정렬
-            const fixedOrder = [
-                'OEV-Boosted High-Yield USDC by Yearn',
-                'High-Yield USDC Vault by Alphaping',
-                'pufETH/WETH Loop on Euler Finance',
-                'High-Yield USDC Vault by Hyperithm',
-                'High-Yield USDC Vault by Steakhouse',
-                'High-Yield USDC Lending by Gauntlet',
-                'High-Yield USDC Vault by Relend',
-                'Smokehouse High-Yield USDT by Steakhouse',
-                'High-Yield USDT Lending by Gauntlet',
-                'SOL High APY Lending Strategy',
-                'APT Low-risk High-interest Staking',
-                'OpenEden High-Yield USDC by Ouroboros',
-                'Jupiter Lend USDC',
-                'Jupiter Lend USDT',
-                'Jupiter Lend USDS'
-            ];
-            
-            const sortedVaults = fixedOrder.map(name => 
-                vaultData.vaults.find(vault => vault.name === name)
-            ).filter(Boolean);
-
-            // 새로운 테이블 렌더링 함수 사용
-            displayVaultsTable(sortedVaults);
-        }
-
-        // 마지막 업데이트 시간 표시
-        function updateLastUpdated() {
-            const timestamp = new Date(vaultData.timestamp);
-            const options = { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZoneName: 'short'
-            };
-            document.getElementById('lastUpdated').textContent = timestamp.toLocaleString('en-US', options);
-        }
-
-        // APY 정렬 기능
-        let currentSortOrder = 'default'; // default, asc, desc
-
-        function sortByAPY() {
-            const apyHeader = document.querySelector('.apy-header');
-            let sortedVaults = [...vaultData.vaults];
-            
-            // 정렬 순서 변경
-            if (currentSortOrder === 'default') {
-                currentSortOrder = 'asc';
-                sortedVaults.sort((a, b) => (a.netApy || 0) - (b.netApy || 0));
-                apyHeader.className = 'apy-header asc';
-            } else if (currentSortOrder === 'asc') {
-                currentSortOrder = 'desc';
-                sortedVaults.sort((a, b) => (b.netApy || 0) - (a.netApy || 0));
-                apyHeader.className = 'apy-header desc';
-            } else {
-                currentSortOrder = 'default';
-                // ALPHA Hub 순서로 복원
-                const fixedOrder = [
-                    'OEV-Boosted High-Yield USDC by Yearn',
-                    'High-Yield USDC Vault by Alphaping',
-                    'pufETH/WETH Loop on Euler Finance',
-                    'High-Yield USDC Vault by Hyperithm',
-                    'High-Yield USDC Vault by Steakhouse',
-                    'High-Yield USDC Lending by Gauntlet',
-                    'High-Yield USDC Vault by Relend',
-                    'Smokehouse High-Yield USDT by Steakhouse',
-                    'High-Yield USDT Lending by Gauntlet',
-                    'SOL High APY Lending Strategy',
-                    'APT Low-risk High-interest Staking',
-                    'OpenEden High-Yield USDC by Ouroboros',
-                    'Jupiter Lend USDC',
-                    'Jupiter Lend USDT',
-                    'Jupiter Lend USDS'
-                ];
-                sortedVaults = fixedOrder.map(name => 
-                    vaultData.vaults.find(vault => vault.name === name)
-                ).filter(Boolean);
-                apyHeader.className = 'apy-header';
-            }
-            
-            // 테이블 다시 렌더링
-            displayVaultsTable(sortedVaults);
-        }
-
-        // 테이블 렌더링 함수
-        function displayVaultsTable(vaults) {
-            const tableContainer = document.getElementById('vaultsTable');
-            
-            if (!vaults || vaults.length === 0) {
-                tableContainer.innerHTML = '<div class="loading">No data available.</div>';
-                return;
-            }
-
-            const tableHTML = `
                 <table>
                     <thead>
                         <tr>
@@ -497,91 +60,133 @@
                             <th>Asset</th>
                             <th>Chain</th>
                             <th>Protocol</th>
-                            <th class="apy-header" onclick="sortByAPY()">APY</th>
+                    <th>APY</th>
                             <th>Link</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${vaults.map((vault, index) => `
-                            <tr>
-                                <td>
-                                    <div class="vault-name">${vault.name}</div>
-                                </td>
-                                <td>
-                                    <div class="asset-badge ${getAssetClass(vault.name, vault.asset)}">
-                                        $${getAssetSymbol(vault.name, vault.asset)}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="chain-badge">
-                                        ${getChainName(vault.name)}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="protocol-badge">
-                                        ${getProtocolName(vault.name)}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="apy-value">${formatApy(vault.netApy)}</div>
-                                </td>
-                                <td>
-                                    ${vault.url ? 
-                                        `<a href="${vault.url}" target="_blank" class="action-link">Go to ></a>` : 
-                                        `<span class="action-link">Tutorial ></span>`
-                                    }
-                                </td>
+                <tr>
+                    <td>High-Yield USDC Vault by Steakhouse</td>
+                    <td><span class="asset usdc">USDC</span></td>
+                    <td><span class="chain">Ethereum</span></td>
+                    <td><span class="protocol">Steakhouse</span></td>
+                    <td class="apy">11.10%</td>
+                    <td><a href="https://app.morpho.org/ethereum/vault/0xBEeFFF209270748ddd194831b3fa287a5386f5bC/steakhouse-usdc" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>High-Yield USDC Vault by Alphaping</td>
+                    <td><span class="asset usdc">USDC</span></td>
+                    <td><span class="chain">Ethereum</span></td>
+                    <td><span class="protocol">Alphaping</span></td>
+                    <td class="apy">11.03%</td>
+                    <td><a href="https://app.morpho.org/ethereum/vault/0xb0f05E4De970A1aaf77f8C2F823953a367504BA9/alphaping-usdc" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>High-Yield USDC Vault by Relend</td>
+                    <td><span class="asset usdc">USDC</span></td>
+                    <td><span class="chain">Ethereum</span></td>
+                    <td><span class="protocol">Relend</span></td>
+                    <td class="apy">10.95%</td>
+                    <td><a href="https://app.morpho.org/ethereum/vault/0x0F359FD18BDa75e9c49bC027E7da59a4b01BF32a/relend-usdc" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>High-Yield USDC Vault by Hyperithm</td>
+                    <td><span class="asset usdc">USDC</span></td>
+                    <td><span class="chain">Ethereum</span></td>
+                    <td><span class="protocol">Hyperithm</span></td>
+                    <td class="apy">10.47%</td>
+                    <td><a href="https://app.morpho.org/ethereum/vault/0x777791C4d6DC2CE140D00D2828a7C93503c67777/hyperithm-usdc" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>High-Yield USDT Lending by Gauntlet</td>
+                    <td><span class="asset usdt">USDT</span></td>
+                    <td><span class="chain">Polygon</span></td>
+                    <td><span class="protocol">Gauntlet</span></td>
+                    <td class="apy">10.41%</td>
+                    <td><a href="https://www.compound.blue/0xfD06859A671C21497a2EB8C5E3fEA48De924D6c8" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>Jupiter Lend USDS</td>
+                    <td><span class="asset usds">USDS</span></td>
+                    <td><span class="chain">Solana</span></td>
+                    <td><span class="protocol">Jupiter</span></td>
+                    <td class="apy">9.38%</td>
+                    <td><a href="https://jup.ag/lend/earn" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>OpenEden High-Yield USDC by Ouroboros</td>
+                    <td><span class="asset usdc">USDC</span></td>
+                    <td><span class="chain">Ethereum</span></td>
+                    <td><span class="protocol">OpenEden</span></td>
+                    <td class="apy">9.26%</td>
+                    <td><a href="https://app.morpho.org/ethereum/vault/0x2F21c6499fa53a680120e654a27640Fc8Aa40BeD/openeden-usdc" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>Jupiter Lend USDT</td>
+                    <td><span class="asset usdt">USDT</span></td>
+                    <td><span class="chain">Solana</span></td>
+                    <td><span class="protocol">Jupiter</span></td>
+                    <td class="apy">9.00%</td>
+                    <td><a href="https://jup.ag/lend/earn" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>Jupiter Lend USDC</td>
+                    <td><span class="asset usdc">USDC</span></td>
+                    <td><span class="chain">Solana</span></td>
+                    <td><span class="protocol">Jupiter</span></td>
+                    <td class="apy">8.77%</td>
+                    <td><a href="https://jup.ag/lend/earn" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>Smokehouse High-Yield USDT by Steakhouse</td>
+                    <td><span class="asset usdt">USDT</span></td>
+                    <td><span class="chain">Ethereum</span></td>
+                    <td><span class="protocol">Steakhouse</span></td>
+                    <td class="apy">8.64%</td>
+                    <td><a href="https://app.morpho.org/ethereum/vault/0xA0804346780b4c2e3bE118ac957D1DB82F9d7484/smokehouse-usdt" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>OEV-Boosted High-Yield USDC by Yearn</td>
+                    <td><span class="asset usdc">USDC</span></td>
+                    <td><span class="chain">Ethereum</span></td>
+                    <td><span class="protocol">Yearn</span></td>
+                    <td class="apy">8.62%</td>
+                    <td><a href="https://app.morpho.org/ethereum/vault/0x68Aea7b82Df6CcdF76235D46445Ed83f85F845A3/oev-boosted-usdc" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>APT Low-risk High-interest Staking</td>
+                    <td><span class="asset apt">APT</span></td>
+                    <td><span class="chain">Aptos</span></td>
+                    <td><span class="protocol">Amnis</span></td>
+                    <td class="apy">7.77%</td>
+                    <td><a href="https://stake.amnis.finance/stake" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>SOL High APY Lending Strategy</td>
+                    <td><span class="asset sol">SOL</span></td>
+                    <td><span class="chain">Solana</span></td>
+                    <td><span class="protocol">Allez</span></td>
+                    <td class="apy">7.26%</td>
+                    <td><a href="https://app.kamino.finance/earn/lend/A1so1bPD3W1TfeFwboDh8yfAAVaVtcdAYBYCjhg2mJQ" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>High-Yield USDC Lending by Gauntlet</td>
+                    <td><span class="asset usdc">USDC</span></td>
+                    <td><span class="chain">Polygon</span></td>
+                    <td><span class="protocol">Gauntlet</span></td>
+                    <td class="apy">7.18%</td>
+                    <td><a href="https://www.compound.blue/0x781FB7F6d845E3bE129289833b04d43Aa8558c42" target="_blank" class="link">Go to ></a></td>
+                </tr>
+                <tr>
+                    <td>pufETH/WETH Loop on Euler Finance</td>
+                    <td><span class="asset pufeth">pufETH</span></td>
+                    <td><span class="chain">Ethereum</span></td>
+                    <td><span class="protocol">Euler</span></td>
+                    <td class="apy">5.31%</td>
+                    <td><a href="https://app.euler.finance/vault/0x46BC453666BA11b4b08B0804E49A9D797546ee7D?network=ethereum" target="_blank" class="link">Go to ></a></td>
                             </tr>
-                        `).join('')}
                     </tbody>
                 </table>
-            `;
-
-            tableContainer.innerHTML = tableHTML;
-        }
-
-        // API에서 데이터 가져오기
-        async function fetchVaultData() {
-            try {
-                const response = await fetch('/api/latest');
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success && result.data) {
-                        vaultData = result.data;
-                        updateStats();
-                        displayData();
-                        updateLastUpdated();
-                    } else {
-                        throw new Error('Invalid API response format');
-                    }
-                } else {
-                    throw new Error('Failed to fetch data');
-                }
-            } catch (error) {
-                console.error('Error fetching vault data:', error);
-                // API 실패 시 로컬 데이터 사용
-                try {
-                    const localResponse = await fetch('./data/latest.json');
-                    if (localResponse.ok) {
-                        vaultData = await localResponse.json();
-                        updateStats();
-                        displayData();
-                        updateLastUpdated();
-                    } else {
-                        throw new Error('Local data also failed');
-                    }
-                } catch (localError) {
-                    console.error('Local data error:', localError);
-                    // 에러 메시지 표시
-                    document.getElementById('vaultsTable').innerHTML = '<div class="error">데이터를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.</div>';
-                }
-            }
-        }
-
-        // 페이지 로드 시 실행
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchVaultData();
-        });
-    </script>
+    </div>
 </body>
 </html>
